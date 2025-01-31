@@ -45,14 +45,11 @@ def upload_and_merge_files(request):
             for chunk in audio_file.chunks():
                 f.write(chunk)
 
-          # Define the output file path with timestamp in the name
         output_file = os.path.join(settings.MEDIA_ROOT, f'output_{timestamp}.mp4')
         
-        # Call FFmpeg with the corrected command
-        command = [r'C:\ffmpeg\bin\ffmpeg.exe', '-i', video_path, '-i', audio_path, '-c:v', 'copy', '-c:a', 'aac', output_file]
+        command = [r'C:\ffmpeg\bin\ffmpeg.exe', '-y', '-i', video_path, '-i', audio_path, '-c:v', 'copy', '-c:a', 'aac', output_file]
         subprocess.run(command, check=True)
 
-        # Return the URL to the output file
         output_url = os.path.join(settings.MEDIA_URL, f'output_{timestamp}.mp4')
         subprocess.run(command, check=True)
 

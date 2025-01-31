@@ -26,7 +26,7 @@ const UploadForm = () => {
         
         console.log("Video file:", videoFile);
         console.log("Audio file:", audioFile);
-        
+
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/upload-and-merge/', formData, {
                 headers: {
@@ -47,7 +47,7 @@ const UploadForm = () => {
             </div>
             <div>
                 <label>Audio:</label>
-                <input type="file" name="audio" accept="audio/mp4" onChange={handleFileChange} />
+                <input type="file" name="audio" accept="video/mp4" onChange={handleFileChange} />
             </div>
             <button type="submit">Upload</button>
         </form>
