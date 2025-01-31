@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from .models import Video, Audio
+import datetime
 
 
 class VideoUploadView(generics.CreateAPIView):
@@ -20,6 +21,10 @@ class AudioUploadView(generics.CreateAPIView):
 
 @csrf_exempt
 def upload_and_merge_files(request):
+    now = datetime.datetime.now()
+    timestamp = now.strftime('%Y%m%d%H%M%S')
+    video_file_name = f'video_{timestamp}.mp4'
+
     if request.method == 'POST':
         video_file = request.FILES.get('video')
         audio_file = request.FILES.get('audio')
@@ -40,8 +45,15 @@ def upload_and_merge_files(request):
             for chunk in audio_file.chunks():
                 f.write(chunk)
 
-        output_file = os.path.join(settings.MEDIA_ROOT, 'output.mp4')
+          # Define the output file path with timestamp in the name
+        output_file = os.path.join(settings.MEDIA_ROOT, f'output_{timestamp}.mp4')
+        
+        # Call FFmpeg with the corrected command
         command = [r'C:\ffmpeg\bin\ffmpeg.exe', '-i', video_path, '-i', audio_path, '-c:v', 'copy', '-c:a', 'aac', output_file]
+        subprocess.run(command, check=True)
+
+        # Return the URL to the output file
+        output_url = os.path.join(settings.MEDIA_URL, f'output_{timestamp}.mp4')
         subprocess.run(command, check=True)
 
         output_url = os.path.join(settings.MEDIA_URL, 'output.mp4')
